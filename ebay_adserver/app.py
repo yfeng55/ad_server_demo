@@ -38,7 +38,7 @@ class GetAd(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         try:
-            parser.add_argument('ad_id', type=int)
+            parser.add_argument('ad_id', type=str)
             args = parser.parse_args()
             return store[args['ad_id']].toJson()    
         except:
@@ -65,11 +65,11 @@ class CreateAd(Resource):
 # <ad_id>
 class DeleteAd(Resource):
     def post(self):
+        parser = reqparse.RequestParser()
         try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('ad_id', type=int)
+            parser.add_argument('ad_id', type=str)
             args = parser.parse_args()
-            del store[args[ad_id]]
+            del store[args['ad_id']]
             return {"args": args, "status": "success"}
         except:
             return {"args": args, "status": "error"}
@@ -78,22 +78,22 @@ class DeleteAd(Resource):
 # <ad_id>
 class RegisterImpression(Resource):
     def post(self):
+        parser = reqparse.RequestParser()
         try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('ad_id', type=int)
+            parser.add_argument('ad_id', type=str)
             args = parser.parse_args()
             store[args['ad_id']].incImpressions()
             return {"args": args, "status": "success"}
-        except:
+        except Exception as e:
             return {"args": args, "status": "error"}
 
 # /register_click
 # <ad_id>
 class RegisterClick(Resource):
     def post(self):
+        parser = reqparse.RequestParser()
         try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('ad_id', type=int)
+            parser.add_argument('ad_id', type=str)
             args = parser.parse_args()
             store[args['ad_id']].incClicks()
             return {"args": args, "status": "success"}
@@ -125,6 +125,7 @@ class ServeAd(Resource):
     def get(self):
         try:
             ads = sorted(store.values(), key=lambda x: getPopularity) 
+            ads[0].incServed()
             return ads[0].toJson()
         except Exception as e:
             print e

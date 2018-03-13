@@ -81,3 +81,7 @@ class Ad(object):
     def incClicks(self):
         self.clicks += 1
         return True
+
+    def incServed(self):
+        self.served += 1
+        return True
